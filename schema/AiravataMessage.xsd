@@ -11,6 +11,7 @@
   <xs:element name="Header">
     <xs:complexType>
       <xs:sequence>
+        <xs:element ref="experimentid" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="experimentName" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="hostname" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="processorcount" minOccurs="0" maxOccurs="1"/>
@@ -25,6 +26,11 @@
         <xs:element ref="outputLocation" minOccurs="0" maxOccurs="1"/>
       </xs:sequence>
     </xs:complexType>
+  </xs:element>
+  <xs:element name="experimentid" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Experiment ID</xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:element name="experimentName" type="xs:string">
     <xs:annotation>
@@ -136,11 +142,6 @@
         <xs:element ref="stderrlocation" minOccurs="0" maxOccurs="1"/>
       </xs:sequence>
     </xs:complexType>
-  </xs:element>
-   <xs:element name="experimentid" type="xs:string">
-    <xs:annotation>
-      <xs:documentation>Experiment ID</xs:documentation>
-    </xs:annotation>
   </xs:element>
   <xs:element name="status" type="xs:string">
     <xs:annotation>
