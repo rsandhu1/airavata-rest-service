@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>airavata.restservices</groupId>
+	<artifactId>airavata-rest</artifactId>
+	<version>1.0</version>
+	<packaging>war</packaging>
+	<name>airavata-rest</name>
+	<description />
+	<properties>
+		<jersey.version>1.13</jersey.version>
+		<tomcat.version>7.0.41</tomcat.version>
+		<cargo.version>1.3.1</cargo.version>
+		<thrift.version>0.9.1</thrift.version>
+		<airavata.version>0.15-SNAPSHOT</airavata.version>
+		<cargo.version>1.1.0</cargo.version>
+		<!-- if you want a remote debugging on a different a address override on 
+			command line with -Dcargo.debug.addres=xxxx -->
+		<cargo.debug.address>8000</cargo.debug.address>
+		<!-- if you want to start remote debugging session suspended override on 
+			command line with -Dcargo.debug.suspend=y -->
+		<cargo.debug.suspend>n</cargo.debug.suspend>
+		<javaagent />
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>apache.snapshots</id>
+			<name>Apache Snapshot Repository</name>
+			<url>http://repository.apache.org/snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>central</id>
+			<name>Maven Central</name>
+			<url>http://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<dependencies>
+	
+        <!-- Shiro uses SLF4J for logging.  We'll use the 'simple' binding
+             in this example app.  See http://www.slf4j.org for more info. -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
+		<!-- These are the Jersey dependencies -->
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.grizzly</groupId>
+			<artifactId>grizzly-servlet-webserver</artifactId>
+			<version>1.9.18-i</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-multipart</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey.jersey-test-framework</groupId>
+			<artifactId>jersey-test-framework-grizzly</artifactId>
+			<version>1.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+            <groupId>org.apache.airavata</groupId>
+            <artifactId>airavata-model-utils</artifactId>
+            <version>${airavata.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.airavata</groupId>
+            <artifactId>airavata-api-stubs</artifactId>
+            <version>${airavata.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${thrift.version}</version>
+        </dependency>
+		
+	</dependencies>
+
+	  <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>${cargo.version}</version>
+                <configuration>
+                    <wait>true</wait>
+                    <configuration>
+                        <properties>
+                            <cargo.jvmargs>
+                                <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=${cargo.debug.address},server=y,suspend=${cargo.debug.suspend} -noverify ${javaagent}]]>
+                            </cargo.jvmargs>
+                            <cargo.tomcat.context.reloadable>true</cargo.tomcat.context.reloadable>
+                        </properties>
+                        <home>${project.build.directory}/tomcat6x</home>
+                        <deployables>
+                            <deployable>
+                                <groupId>ogce.restservices</groupId>
+                                <artifactId>ogce-rest</artifactId>
+                                <type>war</type>
+                                <properties>
+                                    <context>/ogce-rest</context>
+                                </properties>
+                            </deployable>
+                        </deployables>
+                    </configuration>
+                    <container>
+                        <containerId>tomcat6x</containerId>
+                        <timeout>180000</timeout>
+                        <zipUrlInstaller>
+                            <url>
+                                http://archive.apache.org/dist/tomcat/tomcat-6/v6.0.32/bin/apache-tomcat-6.0.32.tar.gz
+                            </url>
+                        </zipUrlInstaller>
+                        <systemProperties>
+                         
+                        </systemProperties>
+                    </container>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>dist</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>${cargo.version}</version>
+                        <executions>
+                            <execution>
+                                <id>dist-cargo-package</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>configure</goal>
+                                    <goal>package</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <configuration>
+                            <!-- Do not attach the resulting artifact(s) to the project (e.g. do not deploy) -->
+                            <attach>false</attach>
+                            <!-- Override finalName -->
+                            <finalName>rave-${project.version}</finalName>
+                            <!-- Workaround for http://jira.codehaus.org/browse/MASSEMBLY-449 -->
+                            <archiverConfig>
+                                <fileMode>0644</fileMode>
+                                <directoryMode>0755</directoryMode>
+                                <defaultDirectoryMode>0755</defaultDirectoryMode>
+                            </archiverConfig>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>dist-assembly</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <finalName>apache-rave-${project.version}</finalName>
+                                    <descriptors>
+                                        <descriptor>${project.basedir}/src/main/assembly/distbin.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
