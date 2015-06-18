@@ -122,24 +122,24 @@
                             </cargo.jvmargs>
                             <cargo.tomcat.context.reloadable>true</cargo.tomcat.context.reloadable>
                         </properties>
-                        <home>${project.build.directory}/tomcat6x</home>
+                        <home>${project.build.directory}/tomcat7x</home>
                         <deployables>
                             <deployable>
-                                <groupId>ogce.restservices</groupId>
-                                <artifactId>ogce-rest</artifactId>
+                                <groupId>airavata.restservices</groupId>
+                                <artifactId>airavata-rest</artifactId>
                                 <type>war</type>
                                 <properties>
-                                    <context>/ogce-rest</context>
+                                    <context>/airavata-rest</context>
                                 </properties>
                             </deployable>
                         </deployables>
                     </configuration>
                     <container>
-                        <containerId>tomcat6x</containerId>
+                        <containerId>tomcat7x</containerId>
                         <timeout>180000</timeout>
                         <zipUrlInstaller>
                             <url>
-                                http://archive.apache.org/dist/tomcat/tomcat-6/v6.0.32/bin/apache-tomcat-6.0.32.tar.gz
+                                http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.62/bin/apache-tomcat-7.0.62.tar.gz 
                             </url>
                         </zipUrlInstaller>
                         <systemProperties>
@@ -150,61 +150,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>dist</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.cargo</groupId>
-                        <artifactId>cargo-maven2-plugin</artifactId>
-                        <version>${cargo.version}</version>
-                        <executions>
-                            <execution>
-                                <id>dist-cargo-package</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>configure</goal>
-                                    <goal>package</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.2.1</version>
-                        <configuration>
-                            <!-- Do not attach the resulting artifact(s) to the project (e.g. do not deploy) -->
-                            <attach>false</attach>
-                            <!-- Override finalName -->
-                            <finalName>rave-${project.version}</finalName>
-                            <!-- Workaround for http://jira.codehaus.org/browse/MASSEMBLY-449 -->
-                            <archiverConfig>
-                                <fileMode>0644</fileMode>
-                                <directoryMode>0755</directoryMode>
-                                <defaultDirectoryMode>0755</defaultDirectoryMode>
-                            </archiverConfig>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>dist-assembly</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <finalName>apache-rave-${project.version}</finalName>
-                                    <descriptors>
-                                        <descriptor>${project.basedir}/src/main/assembly/distbin.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
